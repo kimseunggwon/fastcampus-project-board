@@ -13,7 +13,7 @@ import java.util.Set;
 
 
 @Getter
-@ToString
+@ToString(callSuper = true) // AuditingFields 까지 String
 @Table(indexes = {
         @Index(columnList = "title"),
         @Index(columnList = "hashtag"),
@@ -27,16 +27,21 @@ public class Article extends AuditingFields{
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 key값 자동 증가
     private Long id;
 
+    @Setter @ManyToOne(optional = false)
+    private UserAccount userAccount; // 유저 정보 (ID)
+
     //@Setter 따로 설정한 이유는 이 컬럼만 set 해서 수정을 해주기 위해서
-    @Setter @Column(nullable = false)
+    @Setter
+    @Column(nullable = false)
     private String title; // 제목 , not null
-    @Setter @Column(nullable = false,length = 10000)
+    @Setter
+    @Column(nullable = false,length = 10000)
     private String content; // 본문 , not null
     @Setter
     private String hashtag; // 해시태그
 
     @ToString.Exclude   // ToString 제외
-    @OrderBy("id")
+    @OrderBy("createdAt DESC") //오름차순
     @OneToMany(mappedBy = "article",cascade = CascadeType.ALL)  // 일대다 [1:N] 관계
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
@@ -44,14 +49,15 @@ public class Article extends AuditingFields{
     protected Article() {
     }
 
-    private Article(String title, String content, String hashtag) {
+    private Article(UserAccount userAccount, String title, String content, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
     }
 
-    public static Article of(String title,String content,String hashtag) {
-        return new Article(title,content,hashtag);
+    public static Article of(UserAccount userAccount,String title,String content,String hashtag) {
+        return new Article(userAccount,title,content,hashtag);
     }
 
     // id 만 equals adn HashCode 사용 ( 두 객체를 비교하기 위해 )
