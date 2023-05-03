@@ -2,6 +2,9 @@
 패스트캠퍼스 게시판 만들기 프로젝트 
 
 가장 기본적이고 보편적인 게시판 기능 
+게시글
+게시글 코멘트 
+유저 정보 
 
 
 ## 개발 환경및 기술
@@ -16,6 +19,7 @@
 - MySQL Driver
 - Lombok
 - Spring Boot DevTools
+- Spring Boot Security
 
 
 
