@@ -21,7 +21,7 @@ public record ArticleDto(
     }
 
 
-    // mapper 따로 분리 안함
+    // mapper 따로 분리 안함 DTO에 그대로 사용
     public static ArticleDto from(Article entity) {
         return new ArticleDto(
                 entity.getId(),

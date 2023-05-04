@@ -24,20 +24,22 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
 
+    /** 각각 어떤 cast 검색시 기사 찾기
+     */
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
         if (searchKeyword == null || searchKeyword.isBlank()) {
             return articleRepository.findAll(pageable).map(ArticleDto::from);
         }
 
-        // 바로 return문으로 case 에 break 가 필요없음
+        // 바로 return 할수있어서 case 에 break 가 필요없음
         return switch (searchType) {
             case TITLE -> articleRepository.findByTitleContaining(searchKeyword,pageable).map(ArticleDto::from);
             case CONTENT -> articleRepository.findByContentContaining(searchKeyword,pageable).map(ArticleDto::from);
             case ID-> articleRepository.findByUserAccount_UserIdContaining(searchKeyword,pageable).map(ArticleDto::from);
             case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword,pageable).map(ArticleDto::from);
             case HASHTAG -> articleRepository.findByHashtag("#" + searchKeyword,pageable).map(ArticleDto::from);
-                                                                                    //mapping을 해서 dto로 변환
+                                                                                                 //mapping을 해서 dto로 변환
         };
     }
 
@@ -48,16 +50,21 @@ public class ArticleService {
     public ArticleWithCommentsDto getArticle(Long articleId) {
         return articleRepository.findById(articleId)
                 .map(ArticleWithCommentsDto::from)
+                //.map(article -> ArticleWithCommentsDto.from(article))
                 .orElseThrow(()-> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
     }
+
 
     public void saveArticle(ArticleDto dto) {
         articleRepository.save(dto.toEntity()); //toEntity dto 정보로 부터 entity 하나 만들어서 save 하는것
     }
 
     public void updateArticle(ArticleUpdateDto dto) {
+
         try {
-            Article article = articleRepository.getReferenceById(dto.id());
+            Article article = articleRepository.getReferenceById(dto.id()); // ReferenceById entity에 대한 기본 키 식별자를 통해 조회하기 위해
+                                                                            // entity 전체 업데이트가 아닌, 일부 필드만 업데이트
+
             if (dto.title() != null) {article.setTitle(dto.title());}      //Java ArticleUpdateDto record ==> 알아서 get,set 생성해줌
             if (dto.content() != null) {article.setTitle(dto.content());}
             article.setHashtag(dto.hashtag()); // null field

@@ -20,6 +20,8 @@ public record ArticleResponse(
         return new ArticleResponse(id, title, content, hashtag, createdAt, email, nickname);
     }
 
+    /** 닉네임을 보여주기 위해 받아오고 nickname = Optional null 경우,  다른거 보여주기 userId
+     */
     public static ArticleResponse from(ArticleDto dto) {
         String nickname = dto.userAccountDto().nickname();
         if (nickname == null || nickname.isBlank()) {

@@ -5,6 +5,8 @@ import com.fastcampus.projectboard.dto.ArticleCommentDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/** record 사용으로 간결한 구문과 간단한 데이터 컨테이너 클래스 생성
+ */
 public record ArticleCommentResponse(
         Long id,
         String content,
