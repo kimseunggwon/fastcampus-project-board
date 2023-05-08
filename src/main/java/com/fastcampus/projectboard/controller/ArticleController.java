@@ -45,6 +45,7 @@ public class ArticleController {
         // ArticleWithCommentResponse 으로 바꿔서 보내주도록 코드를 작성
         // ArticleWithCommentResponse => dto 받아서 치환을 한다.
         ArticleWithCommentResponse article = ArticleWithCommentResponse.from(articleService.getArticle(articleId));
+
         map.addAttribute("article" ,article);
         map.addAttribute("articleComments",article.articleCommentResponses());
 

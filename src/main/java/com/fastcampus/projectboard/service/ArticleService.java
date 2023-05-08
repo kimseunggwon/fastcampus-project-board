@@ -39,7 +39,7 @@ public class ArticleService {
             case ID-> articleRepository.findByUserAccount_UserIdContaining(searchKeyword,pageable).map(ArticleDto::from);
             case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword,pageable).map(ArticleDto::from);
             case HASHTAG -> articleRepository.findByHashtag("#" + searchKeyword,pageable).map(ArticleDto::from);
-                                                                                                 //mapping을 해서 dto로 변환
+                                                                                                 //mapping =>  dto 변환
         };
     }
 
