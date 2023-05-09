@@ -3,8 +3,10 @@ package com.fastcampus.projectboard.controller;
 import com.fastcampus.projectboard.response.ArticleResponse;
 import com.fastcampus.projectboard.response.ArticleWithCommentResponse;
 import com.fastcampus.projectboard.service.ArticleService;
+import com.fastcampus.projectboard.service.PaginationService;
 import com.fastcampus.projectboard.type.SearchType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final PaginationService paginationService;
 
     @GetMapping
     public String articles(
@@ -32,7 +35,13 @@ public class ArticleController {
             ModelMap map) {
 
         // ArticleResponse = 게시글에 대한 내용
-        map.addAttribute("articles", articleService.searchArticles(searchType,searchValue,pageable).map(ArticleResponse::from));
+        Page<ArticleResponse> articles = articleService.searchArticles(searchType,searchValue,pageable).map(ArticleResponse::from);
+        // paging 수
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(),articles.getTotalPages());
+
+        map.addAttribute("articles",articles);
+        map.addAttribute("PaginationBarNumbers", barNumbers);
+        //List<Integer> barNumbers = paginationService.getPaginationBarNumbers();
 
         return "articles/index";
     }
